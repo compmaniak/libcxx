@@ -16,6 +16,8 @@
 // const_iterator find(const key_type& k) const;
 
 #include <unordered_set>
+#include <string>
+#include <string_view>
 #include <cassert>
 
 #include "min_allocator.h"
@@ -105,6 +107,15 @@ int main()
         auto i2 = c2.find(10); // +0
         assert(i2 != c2.end());
         assert(dummy_int::counter == 4);
+    }
+    {
+        std::unordered_set<std::string, std::hash<>> const s = {"one", "two", "three", "four"};
+        std::string_view str_v = "three";
+        std::string str3 = "three";
+        std::string str2 = "two";
+        assert(s.find(str_v) == s.find(str3));
+        assert(s.find(std::string_view{"two"}) == s.find(str2));
+        assert(s.find(std::string_view{"TWO"}) == s.end());
     }
 #endif
 }

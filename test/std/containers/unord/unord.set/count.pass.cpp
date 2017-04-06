@@ -16,6 +16,8 @@
 // size_type count(const key_type& k) const;
 
 #include <unordered_set>
+#include <string>
+#include <string_view>
 #include <cassert>
 
 #include "min_allocator.h"
@@ -64,6 +66,13 @@ int main()
         assert(c.count(30) == 1);
         assert(c.count(50) == 1);
         assert(c.count(5) == 0);
+    }
+    {
+        std::unordered_set<std::string, std::hash<>> const s = {"one", "two", "three", "four"};
+        std::string_view str_v = "three";
+        assert(s.count(str_v) == 1);
+        assert(s.count(std::string_view{"two"}) == 1);
+        assert(s.count(std::string_view{"TWO"}) == 0);
     }
 #endif
 }
