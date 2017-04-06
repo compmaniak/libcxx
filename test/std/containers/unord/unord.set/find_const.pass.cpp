@@ -20,6 +20,34 @@
 
 #include "min_allocator.h"
 
+struct dummy_int
+{
+    static size_t counter;
+    int value;
+    
+    dummy_int(): value{0} { ++counter; }
+    dummy_int(int v): value{v} { ++counter; }
+    dummy_int(dummy_int const& other): value(other.value) { ++counter; }
+    dummy_int(dummy_int&& other): value(other.value) { ++counter; }
+    
+    operator int () const { return value; }
+};
+
+size_t dummy_int::counter = 0;
+
+namespace std
+{
+
+template<>
+struct hash<dummy_int>
+{
+    size_t operator ()(dummy_int const& d) const {
+        return std::hash<int>{}(d.value);
+    }
+};
+
+}
+
 int main()
 {
     {
@@ -62,6 +90,21 @@ int main()
         assert(*i == 30);
         i = c.find(5);
         assert(i == c.cend());
+    }
+    {
+        dummy_int a[] = {10}; // +1
+        
+        std::unordered_set<dummy_int> const c1{std::begin(a), std::end(a)}; // +1
+        assert(dummy_int::counter == 2);
+        auto i1 = c1.find(10); // +1
+        assert(i1 != c1.end());
+        assert(dummy_int::counter == 3);
+        
+        std::unordered_set<dummy_int, std::hash<>> const c2{std::begin(a), std::end(a)}; // +1
+        assert(dummy_int::counter == 4);
+        auto i2 = c2.find(10); // +0
+        assert(i2 != c2.end());
+        assert(dummy_int::counter == 4);
     }
 #endif
 }
