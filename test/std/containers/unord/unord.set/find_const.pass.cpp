@@ -102,14 +102,14 @@ int main()
         assert(i1 != c1.end());
         assert(dummy_int::counter == 3);
         
-        std::unordered_set<dummy_int, std::hash<>> const c2{std::begin(a), std::end(a)}; // +1
+        std::unordered_set<dummy_int, std::hash<>, std::equal_to<>> const c2{std::begin(a), std::end(a)}; // +1
         assert(dummy_int::counter == 4);
         auto i2 = c2.find(10); // +0
         assert(i2 != c2.end());
         assert(dummy_int::counter == 4);
     }
     {
-        std::unordered_set<std::string, std::hash<>> const s = {"one", "two", "three", "four"};
+        std::unordered_set<std::string, std::hash<>, std::equal_to<>> const s = {"one", "two", "three", "four"};
         std::string_view str_v = "three";
         std::string str3 = "three";
         std::string str2 = "two";

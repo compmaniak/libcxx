@@ -331,20 +331,8 @@ template <class Value, class Hash, class Pred, class Alloc>
 
 _LIBCPP_BEGIN_NAMESPACE_STD
 
-template <class _Value, class _Hash>
-struct _default_pred
-{
-    typedef equal_to<_Value> type;
-};
-
-template <class _Value>
-struct _default_pred< _Value, hash<> >
-{
-    typedef equal_to<> type;
-};
-
 template <class _Value, class _Hash = hash<_Value>, 
-          class _Pred = typename _default_pred<_Value, _Hash>::type,
+          class _Pred = equal_to<_Value>,
           class _Alloc = allocator<_Value> >
 class _LIBCPP_TEMPLATE_VIS unordered_set
 {
