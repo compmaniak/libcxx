@@ -17,7 +17,6 @@
 
 #include <unordered_set>
 #include <string>
-#include <string_view>
 #include <cassert>
 
 #include "min_allocator.h"
@@ -114,6 +113,11 @@ int main()
         std::string str3 = "three";
         std::string str2 = "two";
         assert(s.find(str_v) == s.find(str3));
+        assert(s.find("three") == s.find(str3));
+        char c1[] = "three";
+        char c2[] = {'t','h','r','e','e','\0'};
+        assert(s.find(c1) == s.find(str3));
+        assert(s.find(c2) == s.find(str3));
         assert(s.find(std::string_view{"two"}) == s.find(str2));
         assert(s.find(std::string_view{"TWO"}) == s.end());
     }

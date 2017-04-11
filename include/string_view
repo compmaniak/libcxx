@@ -758,6 +758,24 @@ hash<basic_string_view<_CharT, _Traits> >::operator()(
     return __do_string_hash(__val.data(), __val.data() + __val.size());
 }
 
+template< class _Tp, size_t _Np, class = typename enable_if<
+    is_character<typename remove_cv<_Tp>::type>::value>::type >
+struct __char_array_hash
+{
+    using _CharT = typename remove_cv<_Tp>::type;
+    
+    size_t operator ()(const _CharT (&__chars)[_Np]) const _NOEXCEPT {
+        return hash<basic_string_view<_CharT>>{}(__chars);
+    }
+};
+
+template< class _Tp, size_t _Np >
+struct hash<_Tp[_Np]>: __char_array_hash<_Tp, _Np>
+{};
+
+template< class _Tp, size_t _Np >
+struct hash<_Tp(&)[_Np]>: __char_array_hash<_Tp, _Np>
+{};
 
 #if _LIBCPP_STD_VER > 11 
 inline namespace literals
