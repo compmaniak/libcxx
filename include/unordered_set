@@ -331,7 +331,8 @@ template <class Value, class Hash, class Pred, class Alloc>
 
 _LIBCPP_BEGIN_NAMESPACE_STD
 
-template <class _Value, class _Hash = hash<_Value>, class _Pred = equal_to<_Value>,
+template <class _Value, class _Hash = hash<_Value>, 
+          class _Pred = equal_to<_Value>,
           class _Alloc = allocator<_Value> >
 class _LIBCPP_TEMPLATE_VIS unordered_set
 {
@@ -351,6 +352,11 @@ private:
     typedef __hash_table<value_type, hasher, key_equal, allocator_type> __table;
 
     __table __table_;
+    
+    template <class _K2, class _Rt>
+    using __enable_if_transparent = typename enable_if<
+        __is_transparent<_Hash, _K2>::value &&
+        __is_transparent<_Pred, _K2>::value, _Rt>::type;
 
 public:
     typedef typename __table::pointer         pointer;
@@ -563,14 +569,41 @@ public:
     iterator       find(const key_type& __k)       {return __table_.find(__k);}
     _LIBCPP_INLINE_VISIBILITY
     const_iterator find(const key_type& __k) const {return __table_.find(__k);}
+    
+    template <class _K2>
+    _LIBCPP_INLINE_VISIBILITY
+    __enable_if_transparent<_K2, iterator>
+    find(const _K2& __k) {return __table_.find(__k);}
+    
+    template <class _K2>
+    _LIBCPP_INLINE_VISIBILITY
+    __enable_if_transparent<_K2, const_iterator>
+    find(const _K2& __k) const {return __table_.find(__k);}
+    
     _LIBCPP_INLINE_VISIBILITY
     size_type count(const key_type& __k) const {return __table_.__count_unique(__k);}
+    
+    template <class _K2>
+    _LIBCPP_INLINE_VISIBILITY
+    __enable_if_transparent<_K2, size_type>
+    count(const _K2& __k) const {return __table_.__count_unique(__k);}
+    
     _LIBCPP_INLINE_VISIBILITY
     pair<iterator, iterator>             equal_range(const key_type& __k)
         {return __table_.__equal_range_unique(__k);}
     _LIBCPP_INLINE_VISIBILITY
     pair<const_iterator, const_iterator> equal_range(const key_type& __k) const
         {return __table_.__equal_range_unique(__k);}
+        
+    template <class _K2>
+    _LIBCPP_INLINE_VISIBILITY
+    __enable_if_transparent<_K2, pair<iterator, iterator>>
+    equal_range(const _K2& __k) {return __table_.__equal_range_unique(__k);}
+    
+    template <class _K2>
+    _LIBCPP_INLINE_VISIBILITY
+    __enable_if_transparent<_K2, pair<const_iterator, const_iterator>>
+    equal_range(const _K2& __k) const {return __table_.__equal_range_unique(__k);}
 
     _LIBCPP_INLINE_VISIBILITY
     size_type bucket_count() const _NOEXCEPT {return __table_.bucket_count();}

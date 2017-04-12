@@ -394,7 +394,7 @@ _LIBCPP_BEGIN_NAMESPACE_STD
 
 template <class _T1, class _T2> struct _LIBCPP_TEMPLATE_VIS pair;
 template <class _Tp> class _LIBCPP_TEMPLATE_VIS reference_wrapper;
-template <class _Tp> struct _LIBCPP_TEMPLATE_VIS hash;
+template <class _Tp = void> struct _LIBCPP_TEMPLATE_VIS hash;
 
 template <class>
 struct __void_t { typedef void type; };
@@ -675,6 +675,19 @@ template <class _Tp> struct _LIBCPP_TEMPLATE_VIS is_null_pointer
 template <class _Tp> _LIBCPP_CONSTEXPR bool is_null_pointer_v
     = is_null_pointer<_Tp>::value;
 #endif
+#endif
+
+// is_character
+
+template <class _Tp> struct is_character            : public false_type {};
+template<>           struct is_character<char>      : public true_type {};
+template<>           struct is_character<char16_t>  : public true_type {};
+template<>           struct is_character<char32_t>  : public true_type {};
+template<>           struct is_character<wchar_t>   : public true_type {};
+
+#if _LIBCPP_STD_VER > 14 && !defined(_LIBCPP_HAS_NO_VARIABLE_TEMPLATES)
+template <class _Tp>
+_LIBCPP_CONSTEXPR bool is_character_v = is_character<_Tp>::value;
 #endif
 
 // is_integral

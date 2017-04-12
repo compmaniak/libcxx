@@ -1588,6 +1588,19 @@ using __enable_hash_helper = _Type;
 
 #endif // !_LIBCPP_CXX03_LANG
 
+template <>
+struct _LIBCPP_TEMPLATE_VIS hash<void>
+{
+    template <typename T>
+    _LIBCPP_INLINE_VISIBILITY 
+    size_t operator()(T&& __v) const _NOEXCEPT {
+        return hash<typename remove_cv<
+            typename remove_reference<T>::type>::type>{}(__v);
+    }
+    
+    typedef void is_transparent;
+};
+
 _LIBCPP_END_NAMESPACE_STD
 
 #endif  // _LIBCPP_UTILITY
